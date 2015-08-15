@@ -13,7 +13,7 @@ var canShiftRight  = true;
 var canShifLeft    = true;
 
 window.onload = function(){
-  var game = new Core(SCREEN_WIDTH, SCREEN_HEIGHT);
+  var game = new Core(600, 600);
   game.scale = 1;
   game.fps = 30;
 
@@ -36,8 +36,8 @@ window.onload = function(){
     playerCar.x     = STARTING_PLAYER_POSITIONX;
     playerCar.y     = STARTING_PLAYER_POSITIONY;
     playerCar.frame = STARTING_PLAYER_FRAME;
-    playerCar.scale(STARTING_PLAYER_ROTATION);
-    playerCar.rotate(STARTING_PLAYER_SCALE);
+    playerCar.scale(STARTING_PLAYER_SCALE);
+    playerCar.rotate(STARTING_PLAYER_ROTATION);
     game.rootScene.addChild(playerCar);
 
     playerCar.addEventListener("enterframe", function(){
