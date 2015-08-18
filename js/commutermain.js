@@ -17,7 +17,7 @@ window.onload = function(){
   game.scale = 1;
   game.fps = 30;
 
-  game.preload("mitch.png");
+  game.preload("/commuter/sprites/mitch.png");
   game.keybind(38, "up");
   game.keybind(40, "down");
   game.keybind(37, "left");

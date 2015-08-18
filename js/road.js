@@ -1,5 +1,5 @@
 	//sprite sheet constants
-	var ROAD = "sprites/Road.png";
+	var ROAD = "/commuter/sprites/Road.png";
 /*
 	var ROADMAP = [
 		[0,0,0,0,0,0,0,0,0,0],
@@ -13,14 +13,16 @@
 		[0,0,0,0,0,0,0,0,0,0],
 		[0,0,0,0,0,0,0,0,0,0]];
  */
-	var roadmap;
 
 	var TILE_SIZE = 60;
-	var SCREEN_HEIGHT;
+	var SCREEN_HEIGHT = 600;
 
-	var intLanes;
+	var intLanes;		//number of lanes
+	var roadMap;		//double array holding road sprite info
+
 function RoadLoad(game, intLanes){
-	game.preload(ROAD);
+	game.preload(ROAD);				//reload road sprite sheet
+	intLanes = this.intLanes; //set number of lanes
 	//build road
 	roadMap = new Array(SCREEN_HEIGHT / TILE_SIZE);
 	for (var i = 0; i < SCREEN_HEIGHT / TILE_SIZE; i++)
@@ -31,29 +33,29 @@ function RoadLoad(game, intLanes){
 			roadMap[i][j] = 0;
 		}
 	}
-	//roadmap
-}
+};
 
 function Road(game){
+	console.log("Road begin");
 	var roadSheet = game.assets[ROAD];
-	var newRoad = new Surface(60);
+	var newRoad = new Surface(TILE_SIZE * intLanes, 60);
 	var road = new Map(60, 60);
 
 	road.image = roadSheet;
-	road.loadData(roadmap);
 	game.rootScene.addChild(newRoad);
 	game.rootScene.addChild(road);
 	road.addEventListener(enchant.Event.ENTER_FRAME, function() {
-		for (var sx = 600 - (TILE_SIZE * intLanes); sx < game.width; sx += TILE_SIZE) {
+		for (var intLane = 0; intLane = intLanes; sx++) {
 			newRoad.draw(
 				roadSheet,
 				TILE_SIZE * (this.age % 6), 0,
 				TILE_SIZE, TILE_SIZE,
-				sx, 0,
+				sx * intLane, 0,
 				TILE_SIZE, TILE_SIZE
 			);
 		}
-
+		road.loadData = roadMap;
 		road.y = (this.age % 6) * 10;
 	});
+	console.log("Road end");
 };
