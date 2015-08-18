@@ -33,7 +33,7 @@ window.onload = function(){
 
   game.onload = function(){
     var playerCar = new Sprite(40,54);
-		Road(game);
+		Road(game, 2);
     playerCar.image = game.assets["mitch.png"];
     playerCar.x     = STARTING_PLAYER_POSITIONX;
     playerCar.y     = STARTING_PLAYER_POSITIONY;
