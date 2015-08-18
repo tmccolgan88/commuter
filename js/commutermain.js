@@ -16,8 +16,9 @@ window.onload = function(){
   var game = new Core(600, 600);
   game.scale = 1;
   game.fps = 30;
-
-  game.preload("/commuter/sprites/mitch.png");
+ alert("here");
+   game.preload("mitch.png");
+  alert("here.5");
   game.keybind(38, "up");
   game.keybind(40, "down");
   game.keybind(37, "left");
@@ -29,12 +30,14 @@ window.onload = function(){
   game.keybind(81, "q");
   game.keybind(69, "e");
 
-	RoadLoad(game);
-
+	//RoadLoad(game);
+  alert("here.75");
   game.onload = function(){
+	  alert("hur");
     var playerCar = new Sprite(40,54);
-		Road(game, 2);
-    playerCar.image = game.assets["mitch.png"];
+		//Road(game);
+    alert("here 1");
+    //playerCar.image = game.assets["mitch.png"];
     playerCar.x     = STARTING_PLAYER_POSITIONX;
     playerCar.y     = STARTING_PLAYER_POSITIONY;
     playerCar.frame = STARTING_PLAYER_FRAME;
