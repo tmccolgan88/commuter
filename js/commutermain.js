@@ -13,12 +13,10 @@ var canShiftRight  = true;
 var canShifLeft    = true;
 
 window.onload = function(){
-  var game = new Core(600, 600);
+	var game = new Core(600, 600);
   game.scale = 1;
-  game.fps = 30;
- alert("here");
-   game.preload("mitch.png");
-  alert("here.5");
+  game.fps = 60;
+	game.preload("/commuter/sprites/mitch.png");
   game.keybind(38, "up");
   game.keybind(40, "down");
   game.keybind(37, "left");
@@ -30,75 +28,72 @@ window.onload = function(){
   game.keybind(81, "q");
   game.keybind(69, "e");
 
-	//RoadLoad(game);
-  alert("here.75");
+	RoadLoad(game);
   game.onload = function(){
-	  alert("hur");
-    var playerCar = new Sprite(40,54);
-		//Road(game);
-    alert("here 1");
-    //playerCar.image = game.assets["mitch.png"];
-    playerCar.x     = STARTING_PLAYER_POSITIONX;
-    playerCar.y     = STARTING_PLAYER_POSITIONY;
-    playerCar.frame = STARTING_PLAYER_FRAME;
-    playerCar.scale(STARTING_PLAYER_SCALE);
-    playerCar.rotate(STARTING_PLAYER_ROTATION);
-    game.rootScene.addChild(playerCar);
+		var playerCar = new Sprite(40,54);
+		Road(game, 6);
+		playerCar.image = game.assets["/commuter/sprites/mitch.png"];
+		playerCar.x     = STARTING_PLAYER_POSITIONX;
+		playerCar.y     = STARTING_PLAYER_POSITIONY;
+		playerCar.frame = STARTING_PLAYER_FRAME;
+		playerCar.scale(STARTING_PLAYER_SCALE);
+		playerCar.rotate(STARTING_PLAYER_ROTATION);
+		game.rootScene.addChild(playerCar);
 
-    playerCar.addEventListener("enterframe", function(){
-      /*if: accelerate forward, else: decelerate due to friction*/
-      if (game.input.w){
-        if (playerCarSpeed < 10)
-          playerCarSpeed += 1;      
-      } 
-      else if (!game.input.w){
-        if (playerCarSpeed > 0)
-          playerCarSpeed -= .25;        
-      }
+		playerCar.addEventListener("enterframe", function(){
+			/*if: accelerate forward, else: decelerate due to friction*/
+			if (game.input.w){
+				if (playerCarSpeed < 10)
+					playerCarSpeed += 1;      
+			} 
+			else if (!game.input.w){
+				if (playerCarSpeed > 0)
+					playerCarSpeed -= .25;        
+			}
 
-      /*if: accelerate backwards, else: decelerate due to friction*/
-      if (game.input.s){
-        if (playerCarSpeed > -10)
-          playerCarSpeed -= 1;
-      } 
-      else if (!game.input.s){
-        if (playerCarSpeed < 0)
-          playerCarSpeed += 1;  
-      }
+			/*if: accelerate backwards, else: decelerate due to friction*/
+			if (game.input.s){
+				if (playerCarSpeed > -10)
+					playerCarSpeed -= 1;
+			} 
+			else if (!game.input.s){
+				if (playerCarSpeed < 0)
+					playerCarSpeed += 1;  
+			}
 
-      /*if: turn car left, else: turn car right*/
-      if (game.input.a){
-        playerCar.rotate(-5)
-      } 
-      else if (game.input.d){
-        playerCar.rotate(5);
-      } 
-  
-      /*Calculate and apply game shift left.*/
-      if (game.input.left && canShiftLeft){
-        playerCar.x += 20 * Math.sin(DegreesToRads(playerCar.rotation - 90));
-        playerCar.y -= 20 * Math.cos(DegreesToRads(playerCar.rotation - 90));
-        canShiftLeft = false;
-      } 
-      else if (!game.input.left){ 
-        canShiftLeft = true;
-      }
+			/*if: turn car left, else: turn car right*/
+			if (game.input.a){
+				playerCar.rotate(-5)
+			} 
+			else if (game.input.d){
+				playerCar.rotate(5);
+			} 
 
-      /*Calculate and apply lane shift right*/ 
-      if (game.input.right && canShiftRight){
-        playerCar.x -= 20 * Math.sin(DegreesToRads(playerCar.rotation - 90));
-        playerCar.y += 20 * Math.cos(DegreesToRads(playerCar.rotation - 90));
-        canShiftRight = false;
+			/*Calculate and apply game shift left.*/
+			if (game.input.left && canShiftLeft){
+				playerCar.x += 20 * Math.sin(DegreesToRads(playerCar.rotation - 90));
+				playerCar.y -= 20 * Math.cos(DegreesToRads(playerCar.rotation - 90));
+				canShiftLeft = false;
+			} 
+			else if (!game.input.left){ 
+				canShiftLeft = true;
+			}
 
-      } 
-      else if(!game.input.right){
-        canShiftRight = true;
-      }
+			/*Calculate and apply lane shift right*/ 
+			if (game.input.right && canShiftRight){
+				playerCar.x -= 20 * Math.sin(DegreesToRads(playerCar.rotation - 90));
+				playerCar.y += 20 * Math.cos(DegreesToRads(playerCar.rotation - 90));
+				canShiftRight = false;
 
-      /*Calculate and apply vector magnitude and velocity.*/
-      playerCar.x += playerCarSpeed * Math.cos(DegreesToRads(playerCar.rotation - 90));
-      playerCar.y += playerCarSpeed * Math.sin(DegreesToRads(playerCar.rotation - 90));
-    });
+			} 
+			else if(!game.input.right){
+				canShiftRight = true;
+			}
+
+			/*Calculate and apply vector magnitude and velocity.*/
+			playerCar.x += playerCarSpeed * Math.cos(DegreesToRads(playerCar.rotation - 90));
+			playerCar.y += playerCarSpeed * Math.sin(DegreesToRads(playerCar.rotation - 90));
+		});
   };
   game.start();
 }
