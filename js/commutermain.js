@@ -5,7 +5,6 @@ var SCREEN_WIDTH              = 600;
 var STARTING_PLAYER_ROTATION  = 0;
 var STARTING_PLAYER_SCALE     = .6;
 var STARTING_PLAYER_FRAME     = 0;
-var STARTING_PLAYER_POSITIONX = 300;
 var STARTING_PLAYER_POSITIONY = 300;
 var SHIFT_DISTANCE = 20;
 var BIG_SHIFT_DISTANCE = 60;
@@ -24,6 +23,7 @@ window.onload = function(){
   game.scale = 1;
   game.fps = 60;
   game.preload("/commuter/sprites/mitch.png");
+	game.preload("/commuter/sprites/carBlue.png");
   game.keybind(38, "up");
   game.keybind(40, "down");
   game.keybind(37, "left");
@@ -38,9 +38,10 @@ window.onload = function(){
 	RoadLoad(game);
   game.onload = function(){
     playerCar = new Sprite(40,54);
-		Road(game, 2);
+		var lanes = 2;
+		Road(game, lanes);
     playerCar.image = game.assets["/commuter/sprites/mitch.png"];
-    playerCar.x     = STARTING_PLAYER_POSITIONX;
+		playerCar.x 		= XforLane(lanes);
     playerCar.y     = STARTING_PLAYER_POSITIONY;
     playerCar.frame = STARTING_PLAYER_FRAME;
     playerCar.scale(STARTING_PLAYER_SCALE);
@@ -135,20 +136,20 @@ window.onload = function(){
     });
 	
 	game.rootScene.addEventListener('enterframe',function(){
-            if(game.frame %  1 == 0){
-                addBasicTraffic();
+            if(game.frame %  60 == 0){
+                addBasicTraffic(RandLane());
             }
         });
   };
   game.start();
 }
 
-function addBasicTraffic(pos){
+function addBasicTraffic(lane){
     var basicTraffic = new Sprite(40,54);
-    basicTraffic.x = rand(SCREEN_WIDTH);
+		basicTraffic.x = XforLane(lane, 40);
     basicTraffic.y = 0;
-	basicTraffic.scale(STARTING_PLAYER_SCALE);
-    basicTraffic.image = game.assets['/commuter/sprites/mitch.png'];
+		basicTraffic.scale(STARTING_PLAYER_SCALE);
+    basicTraffic.image = game.assets['/commuter/sprites/carBlue.png'];
 
     basicTraffic.frame = 0;
 
@@ -171,6 +172,6 @@ function DegreesToRads(degrees){
   return degrees * (Math.PI/180);
 }
 
-function rand(num){
-    return Math.floor(Math.random() * num);
+function rand(digits){
+    return Math.floor(Math.random() * digits);
 }

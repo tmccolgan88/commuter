@@ -50,14 +50,23 @@ function Road(game, intLanes){
 /**
  * gives you the X starting position for a new sprite in any lane, 0 on error
  * X for Lane
- * lane - which lane you want to start from.  Positive for left to right, negative for right to left;
+ * lane - which lane you want to start from, starting from 1
  * width - width of the sprite you are spawning
  */
 function XforLane(lane, width){
 	try{
-		return road.x + (TILE_SIZE * --lane) + ((TILE_SIZE - width)/2);
+		return road.x + (TILE_SIZE * lane) + Xbuffer(width);
 	}
-	catch{
+	catch(e){
+		console.log("error: XforLane");
 		return 0;
 	}
+}
+
+function Xbuffer(width){
+	return (TILE_SIZE - width) / 2;
+}
+
+function RandLane(){
+	return Math.floor(Math.random() * intLanes);
 }
