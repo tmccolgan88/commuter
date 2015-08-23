@@ -1,19 +1,23 @@
 //sprite sheet constants
-var ROAD = "/commuter/sprites/Road.png";
+var SPRITE_SHEET = "/commuter/sprites/asphalt.png";
 var TILE_SIZE = 60;
 
+var intLanes;	//amount of lanes
+var road;			//Enchant.Map
+
 function RoadLoad(game){
-	game.preload(ROAD);	//load road sprite sheet
+	game.preload(SPRITE_SHEET);	//load road sprite sheet
 };
 
 function Road(game, intLanes){
+	this.intLanes = intLanes;	//store amount of lanes to global
 	console.log("Road begin, lanes: " + intLanes);
 	//new map which will be the road scrolling in the background
-	var road = new Map(TILE_SIZE, TILE_SIZE);
+	road = new Map(TILE_SIZE, TILE_SIZE);
 	//move road to the middle of the screen
 	road.x = (game.width - (TILE_SIZE * intLanes)) / 2;
 	//load road sprite sheet
-	road.image = game.assets[ROAD];
+	road.image = game.assets[SPRITE_SHEET];
 	//create road tile double array
 	var roadMap = new Array((game.height / TILE_SIZE) + 1);
 	for (var i = 0; i < roadMap.length; i++)
@@ -33,7 +37,6 @@ function Road(game, intLanes){
 	//frame-by-frame road event
 	road.addEventListener(enchant.Event.ENTER_FRAME, function() {
 		//scroll road down
-		//road.y = (this.age % TILE_SIZE) - TILE_SIZE;
 		if (this.y >= 0)
 			road.y = TILE_SIZE * -1;
 		else
@@ -43,3 +46,18 @@ function Road(game, intLanes){
 	game.rootScene.addChild(road);
 	console.log("Road end");
 };
+
+/**
+ * gives you the X starting position for a new sprite in any lane, 0 on error
+ * X for Lane
+ * lane - which lane you want to start from.  Positive for left to right, negative for right to left;
+ * width - width of the sprite you are spawning
+ */
+function XforLane(lane, width){
+	try{
+		return road.x + (TILE_SIZE * --lane) + ((TILE_SIZE - width)/2);
+	}
+	catch{
+		return 0;
+	}
+}
