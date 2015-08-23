@@ -5,25 +5,30 @@ var SCREEN_WIDTH              = 600;
 var STARTING_PLAYER_ROTATION  = 0;
 var STARTING_PLAYER_SCALE     = .6;
 var STARTING_PLAYER_FRAME     = 0;
+var STARTING_PLAYER_POSITIONX = 300;
 var STARTING_PLAYER_POSITIONY = 300;
-var SHIFT_DISTANCE = 20;
-var BIG_SHIFT_DISTANCE = 60;
+var STARTING_PLAYER_HEALTH    = 5;
+var SHIFT_DISTANCE            = 20;
+var BIG_SHIFT_DISTANCE        = 60;
 
-var playerCarSpeed = 0;
-var canShiftRight  = true;
-var canShifLeft    = true;
+var playerCarSpeed   = 0;
+var canShiftRight    = true;
+var canShifLeft      = true;
 var canBigShiftRight = true;
-var canBigShiftLeft = true;
+var canBigShiftLeft  = true;
 
-var globalGame = null;
-var game = null;
-var playerCar = null;
+var globalGame  = null;
+var game        = null;
+var playerCar   = null;
+var healthStack = new Array();
+
 window.onload = function(){
   game = new Core(600, 600);
   game.scale = 1;
   game.fps = 60;
   game.preload("/commuter/sprites/mitch.png");
-	game.preload("/commuter/sprites/carBlue.png");
+  game.preload("/commuter/sprites/carBlue.png");
+  game.preload("/commuter/sprites/health.png")
   game.keybind(38, "up");
   game.keybind(40, "down");
   game.keybind(37, "left");
@@ -35,13 +40,13 @@ window.onload = function(){
   game.keybind(81, "q");
   game.keybind(69, "e");
 
-	RoadLoad(game);
+  RoadLoad(game);
   game.onload = function(){
     playerCar = new Sprite(40,54);
-		var lanes = 2;
-		Road(game, lanes);
+	var lanes = 2;
+	Road(game, lanes);
     playerCar.image = game.assets["/commuter/sprites/mitch.png"];
-		playerCar.x 		= XforLane(lanes);
+	  playerCar.x 		= 300
     playerCar.y     = STARTING_PLAYER_POSITIONY;
     playerCar.frame = STARTING_PLAYER_FRAME;
     playerCar.scale(STARTING_PLAYER_SCALE);
@@ -135,6 +140,15 @@ window.onload = function(){
       playerCar.y += playerCarSpeed * Math.sin(DegreesToRads(playerCar.rotation - 90));
     });
 	
+	for (i = 0; i < STARTING_PLAYER_HEALTH; i++){
+	  var healthSprite = new Sprite(20, 20);
+	  healthSprite.x = 5 + (i * 25);
+	  healthSprite.y = 5;
+	  healthSprite.image = game.assets["/commuter/sprites/health.png"];
+	  healthStack.push(healthSprite);
+	  game.rootScene.addChild(healthSprite);
+    }
+	
 	game.rootScene.addEventListener('enterframe',function(){
             if(game.frame %  60 == 0){
                 addBasicTraffic(RandLane());
@@ -146,25 +160,41 @@ window.onload = function(){
 
 function addBasicTraffic(lane){
     var basicTraffic = new Sprite(40,54);
-		basicTraffic.x = XforLane(lane, 40);
+	basicTraffic.x = XforLane(lane, 40);
     basicTraffic.y = 0;
-		basicTraffic.scale(STARTING_PLAYER_SCALE);
+	basicTraffic.scale(STARTING_PLAYER_SCALE);
     basicTraffic.image = game.assets['/commuter/sprites/carBlue.png'];
 
     basicTraffic.frame = 0;
 
     basicTraffic.addEventListener('enterframe', function(e) {
-            this.y += 3;
+        this.y += 3;
 			
 	    if (basicTraffic.y > SCREEN_HEIGHT)
 			game.rootScene.removeChild(basicTraffic);
 		
 		if (this.intersect(playerCar)){
-			game.rootScene.removeChild(this)
+			game.rootScene.removeChild(this);
+			playerLoseHealth();
 		}
     });
     game.rootScene.addChild(basicTraffic);
 
+}
+
+/*Minus 1 from player health, remove from gameScene and healStack*/
+function playerLoseHealth(){
+	game.rootScene.removeChild(healthStack.pop());
+}
+
+/*Add 1 to player health, add to gameScene and healthStack*/
+function playerGainHealth(){
+	var healthSprite = new Sprite(20, 20);
+	healthSprite.x = 5 + (healthStack.length * 25);
+	healthSprite.y = 5;
+	healthSprite.image = game.assets["/commuter/sprites/health.png"];
+	healthStack.push(healthSprite);
+	game.rootScene.addChild(healthSprite);
 }
 
 /*Convert degress to radians.*/
@@ -172,6 +202,7 @@ function DegreesToRads(degrees){
   return degrees * (Math.PI/180);
 }
 
+/*Give praise to RNJesus and return a random number*/
 function rand(digits){
     return Math.floor(Math.random() * digits);
 }

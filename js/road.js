@@ -62,7 +62,9 @@ function XforLane(lane, width){
 		return 0;
 	}
 }
-
+/**
+ * amount of space between a sprite and the next lane, if the sprite was in the middle of the lane
+ */
 function Xbuffer(width){
 	return (TILE_SIZE - width) / 2;
 }
