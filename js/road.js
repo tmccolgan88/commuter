@@ -1,35 +1,39 @@
-function CreateRoad(game, intLanes){
-		var TILE_SIZE = 60
-		console.log("Road begin, lanes: " + intLanes);
-		road = new Map(TILE_SIZE, TILE_SIZE);
-		//move road to the middle of the screen
-		road.x = (game.width - (TILE_SIZE * intLanes)) / 2;
-		//load road sprite sheet
-		road.image = game.assets[ASPHALT];
-		//create road tile double array
-		var roadMap = new Array((game.height / TILE_SIZE) + 1);
-		for (var i = 0; i < roadMap.length; i++)
+function MakeRoad(game, intLanes){
+	const TILE_SIZE = 60;
+	console.log("Road begin, lanes: " + intLanes);
+	var road = new Map(TILE_SIZE, TILE_SIZE);
+
+	//-----------custom properties-----------------
+	road.tileSize = TILE_SIZE;
+	road.lanes = intLanes;
+	//move road to the middle of the screen
+	road.x = (game.width - (TILE_SIZE * road.lanes)) / 2;
+	//load road sprite sheet
+	road.image = game.assets[ASPHALT];
+	//create road tile double array
+	var roadMap = new Array((game.height / road.tileSize) + 1);
+	for (var i = 0; i < roadMap.length; i++)
+	{
+		roadMap[i] = new Array(road.lanes);
+		for (var j = 0; j < roadMap[i].length; j++)
 		{
-			roadMap[i] = new Array(intLanes);
-			for (var j = 0; j < roadMap[i].length; j++)
-			{
-				if (j == 0) 								//left lane
-					roadMap[i][j] = 1;
-				else if (j == intLanes - 1)	//right lane
-					roadMap[i][j] = 2;
-				else												//center lane
-					roadMap[i][j] = 0;
-			}
+			if (j == 0) 								//left lane
+				roadMap[i][j] = 1;
+			else if (j == road.lanes - 1)	//right lane
+				roadMap[i][j] = 2;
+			else												//center lane
+				roadMap[i][j] = 0;
 		}
-		road.loadData(roadMap);
-		//frame-by-frame road event
-		road.addEventListener(enchant.Event.ENTER_FRAME, function() {
-			//scroll road down
-			if (road.y >= 0)
-				road.y = TILE_SIZE * -1;
-			else
-				road.y += 4;
-		});
+	}
+	road.loadData(roadMap);
+	//frame-by-frame road event
+	road.addEventListener(Event.ENTER_FRAME, function() {
+		//scroll road down
+		if (this.y >= 0)
+			this.y = this.tileSize * -1;
+		else
+			this.y += 4;
+	});
 
 	//---------------custom functions---------------------
 	/**
@@ -40,7 +44,7 @@ function CreateRoad(game, intLanes){
 	 */
 	road.XforLane = function(lane, width){
 		try{
-			return road.x + (TILE_SIZE * lane) + this.Xbuffer(width);
+			return this.x + (this.tileSize * lane) + this.Xbuffer(width);
 		}
 		catch(e){
 			console.log("error in XforLane: " + e);
@@ -51,11 +55,12 @@ function CreateRoad(game, intLanes){
 	 * amount of space between a sprite and the next lane, if the sprite was in the middle of the lane
 	 */
 	road.Xbuffer = function(width){
-		return (TILE_SIZE - width) / 2;
+		return (this.tileSize - width) / 2;
 	};
 
 	road.RandLane = function(){
-		return Math.floor(Math.random() * intLanes);
+		return Math.floor(Math.random() * this.lanes);
 	};
+	console.log("Road End");
 	return road;
 }
