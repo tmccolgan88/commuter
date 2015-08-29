@@ -2,8 +2,8 @@
 
 const ASPHALT				= "/commuter/sprites/asphalt.png";
 const BIG_RIG				= "/commuter/sprites/bigRig.png";
-const BLACK_CAR			= "/commuter/sprites/carBlack.png";
-const BLUE_CAR 			= "/commuter/sprites/carBlue.png";
+const CAR_BLACK			= "/commuter/sprites/carBlack.png";
+const CAR_BLUE 			= "/commuter/sprites/carBlue.png";
 const HEALTH				= "/commuter/sprites/health.png";
 const MITCH 				= '/commuter/sprites/mitch.png';
 const RED_CAR 			= "/commuter/sprites/carRed.png";
@@ -15,8 +15,8 @@ function LoadAssets(game){
 	game.preload(
 			ASPHALT,
 			BIG_RIG,
-			BLACK_CAR,
-			BLUE_CAR,
+			CAR_BLACK,
+			CAR_BLUE,
 			HEALTH,
 			MITCH,
 			RED_CAR,
