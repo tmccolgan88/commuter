@@ -1,25 +1,25 @@
 /* sprite filepaths */
 
-//player
-const MITCH = '/commuter/sprites/mitch.png';
-
-//cars
-const BLACK_CAR	= "/commuter/sprites/carBlack.png";
-const BLUE_CAR 	= "/commuter/sprites/carBlue.png";
-const RED_CAR 	= "/commuter/sprites/carRed.png";
-
-//trucks
+const ASPHALT				= "/commuter/sprites/asphalt.png";
 const BIG_RIG				= "/commuter/sprites/bigRig.png";
-const RED_TRUCK			= "/commuter/sprites/truckRed.png";
-const YELLOW_TRUCK	= "/commuter/sprites/truckYellow.png";
+const BLACK_CAR			= "/commuter/sprites/carBlack.png";
+const BLUE_CAR 			= "/commuter/sprites/carBlue.png";
+const HEALTH				= "/commuter/sprites/health.png";
+const MITCH 				= '/commuter/sprites/mitch.png';
+const RED_CAR 			= "/commuter/sprites/carRed.png";
+const TRUCK_YELLOW	= "/commuter/sprites/truckYellow.png";
+const TRUCK_BLUE		= "/commuter/sprites/truckBlue.png";
 
 //load all the game assets
 function LoadAssets(game){
-	game.prload(
+	game.preload(
+			ASPHALT,
 			BIG_RIG,
 			BLACK_CAR,
 			BLUE_CAR,
+			HEALTH,
+			MITCH,
 			RED_CAR,
-			RED_TRUCK,
-			YELLOW_TRUCK);
+			TRUCK_BLUE,
+			TRUCK_YELLOW);
 }
