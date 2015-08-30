@@ -1,37 +1,25 @@
 function MakeTraffic(game, spawnSheet){
-	console.log("traffic start");
 	var scene = new Scene();
 
-	scene.spawnRow = 0; 	//create spawn property
-	scene.spawnPool = [];	//create spawn pool
+	scene.spawnRow 	= spawnSheet.length - 1; 	//create spawn property
+	scene.spawnPool = [[],[],[]];	//create spawn pool
 	//create road and attach it to the scene as a property
-	scene.road = MakeRoad(game, spawnSheet[0].length);
-	scene.addChild(scene.road);
+	MakeRoad(game, scene, spawnSheet.length, spawnSheet[0].length);
 
 	scene.addEventListener(Event.ENTER_FRAME, function(){
-		if (game.frame % 24 == 0 && this.scene.spawnRow < spawnSheet.length){
-			console.log("spawning row: " + this.spawnRow);
+		if (game.frame % 20 == 0 && this.scene.spawnRow >= 0){
+			var car;
 			for (var i = 0; i < this.scene.road.lanes; i++){
-				if (spawnSheet[this.spawnRow][i] == 1){
-					var car;
-					//try to pull a car from the spawnPool
-					if (scene.spawnPool.length > 0){
-						car = scene.spawnPool.pop();
-					}
-					else{
-						car = MakeCar(game, "black");	//no cars in pool, create new
-					}
-					scene.addChild(car);
-					car.x = scene.road.XforLane(i, car.width);
-					car.y = car.height * -1;
-					car.despawned = false;
+				if (spawnSheet[this.spawnRow][i] != null){
+					SpawnCar(game, scene, 
+						spawnSheet[this.spawnRow][i][0],	//type
+						i,	//lane
+						spawnSheet[this.spawnRow][i][1]);	//y pos
 				}
 			}
-			console.log(this.scene.spawnPool.length);
-			this.spawnRow++;
+			this.spawnRow--;
 		}
 	});
-	console.log("traffic end");
 	return scene;
 }
 
