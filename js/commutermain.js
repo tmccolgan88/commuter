@@ -3,7 +3,7 @@ enchant();
 var SCREEN_HEIGHT             = 600;
 var SCREEN_WIDTH              = 600;
 var STARTING_PLAYER_ROTATION  = 0;
-var STARTING_PLAYER_SCALE     = .6;
+var STARTING_PLAYER_SCALE     = 1;
 var STARTING_PLAYER_FRAME     = 0;
 var STARTING_PLAYER_POSITIONX = 300;
 var STARTING_PLAYER_POSITIONY = 300;
@@ -40,7 +40,7 @@ var healthStack = new Array();
 window.onload = function(){
   game = new Core(600, 600);
   game.scale = 1;
-  game.fps = 30;
+  game.fps = 60;
   LoadAssets(game);
   game.preload("file:///K:/commuter/sounds/tiresqueel.wav");
   game.keybind(38, "up");
