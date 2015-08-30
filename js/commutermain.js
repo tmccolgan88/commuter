@@ -8,20 +8,28 @@ var STARTING_PLAYER_FRAME     = 0;
 var STARTING_PLAYER_POSITIONX = 300;
 var STARTING_PLAYER_POSITIONY = 300;
 var STARTING_PLAYER_HEALTH    = 5;
-var PLAYER_MAX_SPEED          = 5;
+var PLAYER_MAX_SPEED          = 10;
 var SHIFT_DISTANCE            = 60;
+var SHIFT_DISTANCE_PER_FRAME  = 20;
 var BIG_SHIFT_DISTANCE        = 60;
 var MERGE_DISTANCE            = 5;
+var FRAME_ROTATE_AMOUNT       = 8;
 
 var playerCarSpeed   = 0;
 var playerCarLane    = 4;
 var playerShiftTargetLane = 0;
 var minXPosition     = 0;
 var maxXPosition     = 0;
+var currentShiftFrame = 0;
+var distanceToShiftPerFrame = 0;
+var blinkCount = 0;
 var canShiftRight    = true;
 var canShifLeft      = true;
 var canBigShiftRight = true;
 var canBigShiftLeft  = true;
+var isShiftingRight  = false;
+var isShiftingLeft   = false;
+var blinking         = false;
 
 var globalGame  = null;
 var game        = null;
@@ -32,8 +40,9 @@ var healthStack = new Array();
 window.onload = function(){
   game = new Core(600, 600);
   game.scale = 1;
-  game.fps = 100;
+  game.fps = 30;
   LoadAssets(game);
+  game.preload("file:///K:/commuter/sounds/tiresqueel.wav");
   game.keybind(38, "up");
   game.keybind(40, "down");
   game.keybind(37, "left");
@@ -46,15 +55,17 @@ window.onload = function(){
   game.keybind(69, "e");
 
   game.onload = function(){
-  playerCar = new Sprite(40,54);
+    playerCar = new Sprite(40,54);
 	playerCar.loseHealth = loseHealth;
 	playerCar.gainHealth = gainHealth;
+	playerCar.setPlayerCarSpeed = setPlayerCarSpeed;
+	playerCar.playerCarSpeed = playerCarSpeed;
 	game.player = playerCar;
 	scene = MakeTraffic(game, LEVEL1);
 	game.pushScene(scene);
 	minXPosition = scene.road.XforLane(0, 40);
 	maxXPosition = scene.road.XforLane(scene.road.lanes - 1, 40);
-  playerCar.image = game.assets[MITCH];
+    playerCar.image = game.assets["file:///K:/commuter/sprites/mitch.png"]; 
 	playerCar.x 		= 300
     playerCar.y     = STARTING_PLAYER_POSITIONY;
     playerCar.frame = STARTING_PLAYER_FRAME;
@@ -71,7 +82,7 @@ window.onload = function(){
           } 
           else if (!game.input.w){
             if (playerCarSpeed > 0)
-              playerCarSpeed -=  1;        
+              playerCarSpeed -=  .5;        
           }
 	    }
 		else{
@@ -82,74 +93,107 @@ window.onload = function(){
 	  if (playerCar.y < 600 - 74){
         if (game.input.s){
           if (playerCarSpeed > -PLAYER_MAX_SPEED)
-            playerCarSpeed -= MERGE_DISTANCE;
+            playerCarSpeed -= 1;
           }   
           else if (!game.input.s){
             if (playerCarSpeed < 0)
-              playerCarSpeed += MERGE_DISTANCE;  
+              playerCarSpeed += .5;  
           }
       }
-	  else if (game.input.w){
-		  playerCarSpeed = 1;
-	  }
 	  else{
 		  playerCarSpeed = 0;
 	  }
+	  
+	  ///////////////////////////////////////////////////////////////
+	  
       /*if: turn car left, else: turn car right*/
       if (game.input.a && playerCar.x > minXPosition){
-        //playerCar.rotate(-5)
-		playerCar.x -= 1; // * Math.sin(DegreesToRads(playerCar.rotation - 90));
+		playerCar.x -= MERGE_DISTANCE; // * Math.sin(DegreesToRads(playerCar.rotation - 90));
       } 
       else if (game.input.d && playerCar.x < maxXPosition){
-        //playerCar. (5);
-		playerCar.x += 1; // * Math.sin(DegreesToRads(playerCar.rotation - 90));
+		playerCar.x += MERGE_DISTANCE; // * Math.sin(DegreesToRads(playerCar.rotation - 90));
       } 
-  
-      /*Calculate and apply game shift left.*/
-      if (game.input.left && canShiftLeft){
+	  
+	  ////shifting left/////
+	  if (isShiftingLeft){
+	    if (currentShiftFrame > 0 && currentShiftFrame < 4){
+		    playerCar.rotate(-FRAME_ROTATE_AMOUNT);
+			playerCar.x += distanceToShiftPerFrame;
+			currentShiftFrame++;
+	    }
+        else if (currentShiftFrame == 4){
+			 playerCar.rotate((FRAME_ROTATE_AMOUNT * 3))
+            currentShiftFrame = 0;	
+			isShiftingLeft = false;
+	    }
+	  }
+	  
+	  /*Calculate and apply game shift left.*/
+      if (game.input.left && canShiftLeft && !isShiftingRight){
 		if (playerCarLane > 0){
-		  playerCar.x = scene.road.XforLane(getMyLane() - 1, 60) + 12;
-          canShiftLeft = false;
+		  if (currentShiftFrame == 0){
+		    distanceToShiftPerFrame = -(scene.road.XforLane(getMyLane() + 1, 60) + 12 - playerCar.x) / 3;
+		    ++currentShiftFrame;
+            canShiftLeft = false;
+		    isShiftingLeft = true;
+			//game.assets["file:///K:/commuter/sounds/tiresqueel.wav"].play();
+		  }
         }
       } 
       else if (!game.input.left){ 
         canShiftLeft = true;
       }
 	  
-	  /*Calculate and apply a large shift left.*/
-	  if (game.input.q && canBigShiftLeft && playerCar.x > (0 + BIG_SHIFT_DISTANCE)) {
-        playerCar.x += BIG_SHIFT_DISTANCE * Math.sin(DegreesToRads(playerCar.rotation - 90));
-        playerCar.y -= BIG_SHIFT_DISTANCE * Math.cos(DegreesToRads(playerCar.rotation - 90));
-        canBigShiftLeft = false;
-      } 
-      else if (!game.input.q){ 
-        canBigShiftLeft = true;
-      }
+	  ////shifting right ////
+	  if (isShiftingRight){
+	    if (currentShiftFrame > 0 && currentShiftFrame < 4){
+		    playerCar.rotate(FRAME_ROTATE_AMOUNT);
+			playerCar.x += distanceToShiftPerFrame;
+			currentShiftFrame++;
+	    }
+        else if (currentShiftFrame == 4){
+			 // alert("there");
+			 playerCar.rotate(-(FRAME_ROTATE_AMOUNT * 3))
+            currentShiftFrame = 0;	
+			isShiftingRight = false;
+	    }
+	  }
 
       /*Calculate and apply lane shift right*/ 
-      if (game.input.right && canShiftRight && playerCar.x < (SCREEN_WIDTH - SHIFT_DISTANCE - 60)){
+      if (game.input.right && canShiftRight && !isShiftingLeft){
 		if (playerCarLane < scene.road.lanes - 1){
-		  playerCar.x = scene.road.XforLane(getMyLane() + 1, 60) + 12;
-          canShiftRight = false; 
+			
+		  if (currentShiftFrame == 0){
+		    distanceToShiftPerFrame = (scene.road.XforLane(getMyLane() + 1, 60) + 12 - playerCar.x) / 3;
+		    ++currentShiftFrame;
+			canShiftRight = false;
+            isShiftingRight = true;
+            //game.assets["file:///K:/commuter/sounds/tiresqueel.wav"].play();			
+		  }
 		}
-      } 
-      else if(!game.input.right){
-        canShiftRight = true;
       }
+      else if (!game.input.right){
+		  canShiftRight = true;
+	  }
 
-	  /*Calculate and apply a large lane shift right*/
-	  if (game.input.e && canBigShiftRight && playerCar.x < (SCREEN_WIDTH - BIG_SHIFT_DISTANCE - 60)){
-        playerCar.x -= BIG_SHIFT_DISTANCE * Math.sin(DegreesToRads(playerCar.rotation - 90));
-        playerCar.y += BIG_SHIFT_DISTANCE * Math.cos(DegreesToRads(playerCar.rotation - 90));
-        canBigShiftRight = false;
-      } 
-      else if(!game.input.e){
-        canBigShiftRight = true;
-      }
+	    if (blinking){
+			if (game.frame % 2 == 0){
+				playerCar.image = "";
+			}
+			else{
+				playerCar.image = game.assets["file:///K:/commuter/sprites/mitch.png"];
+			}
+			
+			if (blinkCount++ > 10){
+				blinking = false;
+				blinkCount = 0;
+				playerCar.image = game.assets["file:///K:/commuter/sprites/mitch.png"];
+			}
+		}	  
+
       /*Calculate and apply vector magnitude and velocity.*/
       playerCar.x += playerCarSpeed * Math.cos(DegreesToRads(playerCar.rotation - 90));
       playerCar.y += playerCarSpeed * Math.sin(DegreesToRads(playerCar.rotation - 90));
-	  
 	  playerCarLane = getMyLane();
     }); //end addEventListener
 	
@@ -158,21 +202,29 @@ window.onload = function(){
 	  var healthSprite = new Sprite(20, 20);
 	  healthSprite.x = 5 + (i * 25);
 	  healthSprite.y = 5;
-	  healthSprite.image = game.assets[HEALTH];
+	  healthSprite.image = game.assets["file:///K:/commuter/sprites/health.png"];
 	  healthStack.push(healthSprite);
 	  scene.addChild(healthSprite);
     }
   };
+  
   game.start();
-}
+} // end game.load
+
+
 
 /*Minus 1 from player health, remove from gameScene and healStack*/
 var loseHealth = function playerLoseHealth(){
 	scene.removeChild(healthStack.pop());
 	
-	/*if (healthStack.length == 0){
-		gameOver();
-	}*/
+	if (!blinking)
+	  playerCar.y += 15;
+	
+	playerCarSpeed = 0;
+	blinking = true;
+	if (healthStack.length == 0){
+		//game.stop();
+	}
 }
 
 /*Add 1 to player health, add to gameScene and healthStack*/
@@ -180,9 +232,13 @@ var gainHealth = function playerGainHealth(){
 	var healthSprite = new Sprite(20, 20);
 	healthSprite.x = 5 + (healthStack.length * 25);
 	healthSprite.y = 5;
-	healthSprite.image = game.assets[HEALTH];
+	healthSprite.image = game.assets["file:///K:/commuter/sprites/health.png"];
 	healthStack.push(healthSprite);
 	game.rootScene.addChild(healthSprite);
+}
+
+var setPlayerCarSpeed = function setPlayerCarSpeed(newSpeed){
+	this.playerCarSpeed = newSpeed;
 }
 
 function getMyLane(){

@@ -1,7 +1,6 @@
 function MakeCar(game, color){
-	console.log("creating " + color + " car");
 	var car = new Sprite(40, 54);
-
+    car.scale(.6);
 	//get image asset based on color
 	switch (color){
 		case "black":
@@ -13,20 +12,15 @@ function MakeCar(game, color){
 			return null;
 	};
 
-	//set car to scale
-  car.scale(.6);
-
-	//add event listener
 	car.addEventListener(Event.ENTER_FRAME, function(){
-		this.y += 3; //scroll downwards
-
-		if (this.y > game.height){	//scrolled past bottom of screen, despawn
-			this.scene.spawnPool.push(this);
+		this.y += 3;
+		
+		if (this.y > game.height)
 			this.scene.removeChild(this);
-		}
-		else if (game.player.intersect(this)){	//intersected with a 
-			game.player.loseHealth();
-		}
+		if (game.player.intersect(this)){
+            this.scene.removeChild(this);
+            playerCar.loseHealth();
+	    }
 	});
 
 	return car;
