@@ -50,10 +50,11 @@ function SpawnCar(game, scene, type, lane, pos){
 		if (this.y > game.height){	//scrolled past bottom of screen, despawn
 			this.scene.spawnPool[this.type].push(this);
 			this.scene.removeChild(this);
+		}
 		if (game.player.intersect(this)){
-            this.scene.removeChild(this);
-            playerCar.loseHealth();
-	    }
+					this.scene.removeChild(this);
+					playerCar.loseHealth();
+		}
 	});
 	scene.addChild(car);
 }

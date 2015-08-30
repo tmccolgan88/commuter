@@ -42,7 +42,7 @@ window.onload = function(){
   game.scale = 1;
   game.fps = 60;
   LoadAssets(game);
-  game.preload("file:///K:/commuter/sounds/tiresqueel.wav");
+  game.preload(TIRE_SQUEEL);
   game.keybind(38, "up");
   game.keybind(40, "down");
   game.keybind(37, "left");
@@ -65,7 +65,7 @@ window.onload = function(){
 	game.pushScene(scene);
 	minXPosition = scene.road.XforLane(0, 40);
 	maxXPosition = scene.road.XforLane(scene.road.lanes - 1, 40);
-    playerCar.image = game.assets["file:///K:/commuter/sprites/mitch.png"]; 
+    playerCar.image = game.assets[MITCH];
 	playerCar.x 		= 300
     playerCar.y     = STARTING_PLAYER_POSITIONY;
     playerCar.frame = STARTING_PLAYER_FRAME;
@@ -136,7 +136,7 @@ window.onload = function(){
 		    ++currentShiftFrame;
             canShiftLeft = false;
 		    isShiftingLeft = true;
-			//game.assets["file:///K:/commuter/sounds/tiresqueel.wav"].play();
+			game.assets[TIRE_SQUEEL].play();
 		  }
         }
       } 
@@ -168,7 +168,7 @@ window.onload = function(){
 		    ++currentShiftFrame;
 			canShiftRight = false;
             isShiftingRight = true;
-            //game.assets["file:///K:/commuter/sounds/tiresqueel.wav"].play();			
+            game.assets[TIRE_SQUEEL].play();			
 		  }
 		}
       }
@@ -181,13 +181,13 @@ window.onload = function(){
 				playerCar.image = "";
 			}
 			else{
-				playerCar.image = game.assets["file:///K:/commuter/sprites/mitch.png"];
+				playerCar.image = game.assets[MITCH];
 			}
 			
 			if (blinkCount++ > 10){
 				blinking = false;
 				blinkCount = 0;
-				playerCar.image = game.assets["file:///K:/commuter/sprites/mitch.png"];
+				playerCar.image = game.assets[MITCH];
 			}
 		}	  
 
@@ -202,7 +202,7 @@ window.onload = function(){
 	  var healthSprite = new Sprite(20, 20);
 	  healthSprite.x = 5 + (i * 25);
 	  healthSprite.y = 5;
-	  healthSprite.image = game.assets["file:///K:/commuter/sprites/health.png"];
+	  healthSprite.image = game.assets[HEALTH];
 	  healthStack.push(healthSprite);
 	  scene.addChild(healthSprite);
     }
@@ -232,7 +232,7 @@ var gainHealth = function playerGainHealth(){
 	var healthSprite = new Sprite(20, 20);
 	healthSprite.x = 5 + (healthStack.length * 25);
 	healthSprite.y = 5;
-	healthSprite.image = game.assets["file:///K:/commuter/sprites/health.png"];
+	healthSprite.image = game.assets[HEALTH];
 	healthStack.push(healthSprite);
 	game.rootScene.addChild(healthSprite);
 }

@@ -8,6 +8,7 @@ const GRASS					= "/commuter/sprites/grass.png";
 const HEALTH				= "/commuter/sprites/health.png";
 const MITCH 				= '/commuter/sprites/mitch.png';
 const RED_CAR 			= "/commuter/sprites/carRed.png";
+const TIRE_SQUEEL		=	"/commuter/sounds/tiresqueel.wav";
 const TRUCK_YELLOW	= "/commuter/sprites/truckYellow.png";
 const TRUCK_BLUE		= "/commuter/sprites/truckBlue.png";
 
@@ -22,6 +23,7 @@ function LoadAssets(game){
 			HEALTH,
 			MITCH,
 			RED_CAR,
+			TIRE_SQUEEL,
 			TRUCK_BLUE,
 			TRUCK_YELLOW);
 }

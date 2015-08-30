@@ -1,7 +1,6 @@
 function MakeRoad(game, scene, length, intLanes){
 	const TILE_SIZE = 60;
 	const MED_SPEED = 4;
-	console.log("Road begin, lanes: " + intLanes);
 	var road = new Map(TILE_SIZE, TILE_SIZE);
 	scene.road = road;
 	//-----------custom properties-----------------
@@ -69,7 +68,6 @@ function MakeRoad(game, scene, length, intLanes){
 }
 
 function MakeGrass(game, scene, length){
-	console.log("MakeGrass start");
 	const TILE_SIZE = 48;
 	var map = new Map(TILE_SIZE, TILE_SIZE);
 	map.image = game.assets[GRASS];
@@ -112,5 +110,4 @@ function MakeGrass(game, scene, length){
 
 	//add to scene
 	scene.addChild(map);
-	console.log("MakeGrass end");
 }
